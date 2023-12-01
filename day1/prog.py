@@ -31,7 +31,7 @@ def part1():
 # part1()
 
 def part2():
-    inf = open("sample2.txt","r")
+    inf = open("input.txt","r")
     lines = inf.readlines()
     inf.close()
 
@@ -85,43 +85,45 @@ def part2():
                     first = False       
         first = True
         rdata = data[::-1]
+        print(rdata)
         for i in range(len(rdata)):
             c = rdata[i]
-            if c in ['o','t','f','s','e','n']:
+            if c in ['e','o','r','x','n','t']:
                 # check for case where digit is spelled
-                if data[i:].startswith("two"):
+                # but in reverse!
+                if rdata[i:].startswith("owt"):
                     if first:
                         ts = ts + "2"
                         first = False
-                elif data[i:].startswith("one"):
+                elif rdata[i:].startswith("eno"):
                     if first:
                         ts = ts + "1"
                         first = False
-                elif data[i:].startswith("three"):
+                elif rdata[i:].startswith("eerht"):
                     if first:
                         ts = ts + "3"
                         first = False
-                elif data[i:].startswith("four"):
+                elif rdata[i:].startswith("ruof"):
                     if first:
                         ts = ts + "4"
                         first = False
-                elif data[i:].startswith("five"):
+                elif rdata[i:].startswith("evif"):
                     if first:
                         ts = ts + "5"
                         first = False
-                elif data[i:].startswith("six"):
+                elif rdata[i:].startswith("xis"):
                     if first:
                         ts = ts + "6"
                         first = False
-                elif data[i:].startswith("seven"):
+                elif rdata[i:].startswith("neves"):
                     if first:
                         ts = ts + "7"
                         first = False
-                elif data[i:].startswith("eight"):
+                elif rdata[i:].startswith("thgie"):
                     if first:
                         ts = ts + "8"
                         first = False
-                elif data[i:].startswith("nine"):
+                elif rdata[i:].startswith("enin"):
                     if first:
                         ts = ts + "9"
                         first = False
@@ -132,6 +134,7 @@ def part2():
 
         print(ts)
         res = res + int(ts)
+        
     print("res",res)
 
 part2()
