@@ -1,9 +1,12 @@
 
-from dataclasses import dataclass
+class GameData:
+    color:str
+    count:int
 
-@dataclass
 class Game:
-    game_number:int
+    id : int
+    data : "list[GameData]"
+
 
 inf = open("sample1.txt","r")
 data = inf.readlines()
@@ -17,6 +20,7 @@ def parse_a_line(line:str):
 
     game_number = int(parts[0].split(" ")[1])
     gdata = parts[1].rstrip().lstrip()
+    gdata_list = []
 
     parts = gdata.split(";")
     print(parts)
@@ -25,8 +29,14 @@ def parse_a_line(line:str):
         print("work on",p)
         small_parts = p.split(",")
         print(small_parts)
+        for sp in small_parts:
+            sp = sp.lstrip().rstrip()
+            spdata = sp.split(" ")
+            print("spdata:",spdata)
+            gdata_list.append((int(spdata[0]),spdata[1]))
 
     print("game number",game_number)
+    print(gdata_list)
     print()
 
 parse_a_line(data[0])
