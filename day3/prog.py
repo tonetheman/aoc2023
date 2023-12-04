@@ -102,11 +102,14 @@ for i in range(len(grid)): # rows
                 pass
             else:
                 if not current_group in groups:
-                    groups[current_group] = 1
+                    groups[current_group] = 0
 
             if has_sym:
                 print("this group had a sym",current_group)
-                groups[current_group] = 0
+                if (not groups[current_group]):
+                    groups[current_group] = 1
+                else:
+                    groups[current_group] += 1
 
             # not a part reset group
             current_group = ""
@@ -116,8 +119,7 @@ for i in range(len(grid)): # rows
         # print("current group",current_group)
 
 total = 0
-for k in groups.keys():
-    if groups[k]==0:
-        print(k)
-        total = total + int(k)
+for k in groups:
+    if groups[k] > 0:
+        total = total + groups[k] * int(k)
 print(total)
