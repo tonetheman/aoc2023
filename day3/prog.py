@@ -2,10 +2,17 @@
 
 from typing import List
 
-
 inf = open("sample.txt","r")
-data = inf.readlines()
+data : List[str] = inf.readlines()
 inf.close()
+
+class Group:
+    def __init__(self):
+        self.r = -1
+        self.c = -1
+        self.val = ""
+    def __repr__(self) -> str:
+        return str(self.r) + " " +self.val
 
 class Grid:
     def __init__(self,data):
@@ -46,6 +53,8 @@ class Grid:
             print(computed_r,computed_c)
             if computed_c<0 or computed_r<0:
                 pass # ignore
+            elif computed_c>len(self.grid[0]) or computed_r>len(self.grid):
+                pass
             else:
                 v = self.get(computed_r,computed_c)
                 if not v in ['.','0','1','2','3','4','5','6','7','8','9']:
@@ -55,34 +64,30 @@ class Grid:
 grid = Grid(data)
 groups = []
 
-rindex = 0
-for line in grid.grid:
-    cindex = 0
-    in_group = False
-    current_group = ""
-    current_group_status = False
-    for c in line:
-        if c in ['0','1','2','3','4','5','6','7','8','9']:
-            if in_group:
-                current_group = current_group + str(c)
-            else:
-                in_group = True
-                current_group = current_group + str(c)
-            if grid.check(rindex,cindex):
-                if current_group_status==False:
-                    current_group_status = True
-        elif c=='.':
-            if in_group:
+# find groups
+r=0
+while True:
+    ts = ""
+    for i in range(10):
+        cc = grid.get(r,i)
+        if cc in ['0','1','2','3','4','5','6','7','8','9']:
+            ts = ts + str(cc)
+        elif cc=='.':
+            if ts!="":
+                print("group create",ts)
+                tmp = Group()
+                tmp.val = ts
+                tmp.r = r
+                groups.append(tmp)
+                ts = ""
+    if ts != "":
+        print("group create",ts)
+        tmp = Group()
+        tmp.val = ts
+        tmp.r = r
+        groups.append(tmp)
+    r += 1
+    if r==10:
+        break
 
-                print("not in group anymore",current_group_status,current_group)
-                # no longer in a group
-                in_group = False
-                current_group = ""
-                current_group_status = False
-        print(current_group)
-    
-    if in_group:
-        print("in group at end of line")
-
-        cindex += 1
-    rindex += 1
+print(groups)
