@@ -101,19 +101,60 @@ def test2():
 
     print(res,res1,res2,res3,res4,res5,res6)
 
-lowest = 999999999
-for n in seed_nums:
-    n = int(n)
+def part1():
+    lowest = 999999999
+    for n in seed_nums:
+        n = int(n)
 
-    res = find_num(n,seed_to_soil)
-    res1 = find_num(res,soil_to_fert)
-    res2 = find_num(res1,fert_to_water)
-    res3 = find_num(res2,water_to_light)
-    res4 = find_num(res3,light_to_temp)
-    res5 = find_num(res4,temp_to_humid)
-    res6 = find_num(res5,humid_to_loc)
+        res = find_num(n,seed_to_soil)
+        res1 = find_num(res,soil_to_fert)
+        res2 = find_num(res1,fert_to_water)
+        res3 = find_num(res2,water_to_light)
+        res4 = find_num(res3,light_to_temp)
+        res5 = find_num(res4,temp_to_humid)
+        res6 = find_num(res5,humid_to_loc)
 
-    if res6<lowest:
-        lowest=res6
+        if res6<lowest:
+            lowest=res6
 
-print("low",lowest)
+    print("low",lowest)
+
+def part2():
+
+    lowest = 999999999
+
+    seeds = []
+    pos = 0
+    print("len",len(seed_nums))
+    while True:
+        starting = int(seed_nums[pos])
+        pos += 1
+        r = int(seed_nums[pos])
+        pos += 1
+        for i in range(r):
+            n = starting+i
+            res = find_num(n,seed_to_soil)
+            res1 = find_num(res,soil_to_fert)
+            res2 = find_num(res1,fert_to_water)
+            res3 = find_num(res2,water_to_light)
+            res4 = find_num(res3,light_to_temp)
+            res5 = find_num(res4,temp_to_humid)
+            res6 = find_num(res5,humid_to_loc)
+            if res6<lowest:
+                lowest=res6
+
+
+        if pos == len(seed_nums):
+            break
+
+
+
+
+    print("low",lowest)
+
+
+
+
+
+
+part2()
