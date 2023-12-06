@@ -32,7 +32,7 @@ var light_to_temp : seq[ tuple[dest:int,src:int,range:int]]
 var temp_to_humid : seq[ tuple[dest:int,src:int,range:int]]
 var humid_to_loc : seq[ tuple[dest:int,src:int,range:int]]
 
-let data = makefilebuffer("sample.txt")
+let data = makefilebuffer("input.txt")
 var seed_nums : seq[string]
 for line in data:
     if line.startsWith("seeds:"):
@@ -72,6 +72,27 @@ for line in data:
         elif state == HUMID_TO_LOC:
             humid_to_loc.add(r)
 
+proc test1() =
+    assert(find_num(79,seed_to_soil)==81)
+    assert(find_num(14,seed_to_soil)==14)
+    assert(find_num(55,seed_to_soil)==57)
+    assert(find_num(13,seed_to_soil)==13)
+
+proc ck(n:int):int64 = 
+    let res = find_num(n,seed_to_soil)
+    let res1 = find_num(res,soil_to_fert)
+    let res2 = find_num(res1,fert_to_water)
+    let res3 = find_num(res2,water_to_light)
+    let res4 = find_num(res3,light_to_temp)
+    let res5 = find_num(res4,temp_to_humid)
+    let res6 = find_num(res5,humid_to_loc)
+    return res6
+
+proc test2() =
+    assert ck(79) == 82
+    assert ck(14) == 43
+    assert ck(55) == 86
+    assert ck(13) == 35
 
 var lowest : int64 = 999999999
 var pos = 0
@@ -80,19 +101,14 @@ while true:
     pos=pos+1
     let r = parseInt(seed_nums[pos])
     pos=pos+1
+    echo("checking now ...",starting,r)
     for i in 0 ..< r:
-        let n = starting+i
-        let res = find_num(n,seed_to_soil)
-        let res1 = find_num(res,soil_to_fert)
-        let res2 = find_num(res1,fert_to_water)
-        let res3 = find_num(res2,water_to_light)
-        let res4 = find_num(res3,light_to_temp)
-        let res5 = find_num(res4,temp_to_humid)
-        let res6 = find_num(res5,humid_to_loc)
-
+        let res6 = ck(starting+i)
         if res6<lowest:
             lowest=res6
     if pos==len(seed_nums):
         break
 
 echo(lowest)
+
+# too high 69841804
