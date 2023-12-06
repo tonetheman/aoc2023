@@ -7,7 +7,9 @@ proc makefilebuffer*(inputfile:string) : seq[string] =
         buffer.add(line)
     return buffer
 
-proc find_num(target : int64, iranges : seq[ tuple[dest:int,src:int,range:int]]) : int64 =
+type tseq = seq[ tuple[dest:uint64,src:uint64,range:uint64]]
+
+proc find_num(target : uint64, iranges : tseq) : uint64 =
     for r in iranges:
         if target >= r.src and target <= r.src+r.range:
             # print("matched this range",r, "target",target)
@@ -24,13 +26,13 @@ type States = enum
 
 var state = START
 
-var seed_to_soil : seq[ tuple[dest:int,src:int,range:int]]
-var soil_to_fert : seq[ tuple[dest:int,src:int,range:int]]
-var fert_to_water : seq[ tuple[dest:int,src:int,range:int]]
-var water_to_light : seq[ tuple[dest:int,src:int,range:int]]
-var light_to_temp : seq[ tuple[dest:int,src:int,range:int]]
-var temp_to_humid : seq[ tuple[dest:int,src:int,range:int]]
-var humid_to_loc : seq[ tuple[dest:int,src:int,range:int]]
+var seed_to_soil : tseq
+var soil_to_fert : tseq
+var fert_to_water : tseq
+var water_to_light : tseq
+var light_to_temp : tseq
+var temp_to_humid : tseq
+var humid_to_loc : tseq
 
 let data = makefilebuffer("input.txt")
 var seed_nums : seq[string]
@@ -56,7 +58,9 @@ for line in data:
 
         let tmp = line.strip().split()
         echo(tmp)
-        let r = (dest:parseInt(tmp[0]),src:parseInt(tmp[1]),range:parseInt(tmp[2]))
+        let r = (dest:uint64(parseInt(tmp[0])),
+            src:uint64(parseInt(tmp[1])),
+            range:uint64(parseInt(tmp[2])))
         if state==SEED_TO_SOIL_MAP:
             seed_to_soil.add(r)
         elif state == SOIL_TO_FERT:
@@ -78,7 +82,7 @@ proc test1() =
     assert(find_num(55,seed_to_soil)==57)
     assert(find_num(13,seed_to_soil)==13)
 
-proc ck(n:int):int64 = 
+proc ck(n:uint64):uint64 = 
     let res = find_num(n,seed_to_soil)
     let res1 = find_num(res,soil_to_fert)
     let res2 = find_num(res1,fert_to_water)
@@ -94,16 +98,16 @@ proc test2() =
     assert ck(55) == 86
     assert ck(13) == 35
 
-var lowest : int64 = 999999999
+var lowest : uint64 = 999999999
 var pos = 0
 while true:
-    let starting = parseInt(seed_nums[pos])
+    let starting = uint64(parseInt(seed_nums[pos]))
     pos=pos+1
     let r = parseInt(seed_nums[pos])
     pos=pos+1
     echo("checking now ...",starting,r)
     for i in 0 ..< r:
-        let res6 = ck(starting+i)
+        let res6 = ck(starting+uint64(i))
         if res6<lowest:
             lowest=res6
     if pos==len(seed_nums):
