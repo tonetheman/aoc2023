@@ -76,6 +76,15 @@ void handle_seeds(char * line) {
     }
 }
 
+void junk(char * line) {
+    vector<int> svec;
+    char * token = strtok(line," ");
+    while (token) {
+        cout << atoi(token) << "\n";
+        token = strtok(0,line);
+    }
+}
+
 int main() {
 
     ifstream inf("sample.txt");
@@ -90,7 +99,8 @@ int main() {
     while (inf) {
         inf.getline(line,512);
         if (strncmp(line,"seeds:",5)==0) {
-            handle_seeds(line);
+            //handle_seeds(line);
+            junk(line);
         }
     }
 
