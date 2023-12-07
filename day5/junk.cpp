@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <cstring>
+#include <vector>
 
 using namespace std;
 
@@ -38,6 +39,7 @@ void print_int_array(int* a,int count) {
 }
 
 void handle_seeds(char * line) {
+    vector<int> svec;
     cout << line << "\n";
     int token_count = 0;
     char * token = strtok(line," ");
@@ -46,7 +48,8 @@ void handle_seeds(char * line) {
 
         } else {
             token_count++;
-            //cout << "token: " << token << "\n";
+            cout << "first loop token: " << token << "\n";
+            svec.push_back(atoi(token));
         }
         token = strtok(0, " ");
     }
@@ -55,17 +58,22 @@ void handle_seeds(char * line) {
     token = strtok(line," ");
     token_count = 0;
     while (token) {
+        cout << "token at top of loop: " << token << "\n";
         if (strcmp(token,"seeds:")==0) {
 
         } else {
+            cout << "setting into array..." << "\n";
             seeds_array[token_count] = atoi(token);
             token_count++;
             cout << "token: " << token << "\n";
         }
         token = strtok(0, " ");
+        cout << "token is now " << token << "\n";
     }
-    print_int_array(seeds_array,4);
-
+    //print_int_array(seeds_array,4);
+    for(auto i=svec.begin();i<svec.end();i++) {
+        cout << "from vec: " << *i << "\n";
+    }
 }
 
 int main() {
