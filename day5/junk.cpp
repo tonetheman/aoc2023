@@ -1,110 +1,148 @@
 #include <iostream>
-#include <fstream>
 #include <cstring>
-#include <vector>
+#include <fstream>
 
 using namespace std;
 
 struct Range {
-    int dest;
-    int src;
-    int range;
+	int dest;
+	int src;
+	int range;
+	friend ostream& operator<<(ostream& os, const Range& src);
 };
-
-int find_num(int target, int rcount, Range *ranges) {
-    for(int i=0;i<rcount;i++) {
-        Range r = ranges[i];
-        if ((target>=r.src) && (target<=r.src+r.range)) {
-            return r.dest + ( target - r.src);
-        }
-    }
-    return target;
+ostream& operator<<(ostream& os, const Range& src) {
+	os << src.dest << " " << src.src << " " << src.range;
+	return os;
 }
 
-void test1() {
-    Range ranges[2] = {
-        Range{50,98,2},
-        Range{52,50,48}
-    };
-
-    int res = find_num(79,2,ranges);
-    cout << "res: " << res << "\n";
+struct SeedStruct {
+	int * seeds;
+	int count;
+	friend ostream& operator<<(ostream& os, const SeedStruct& ss);
+};
+ostream& operator<<(ostream& os, const SeedStruct& ss) {
+	for(int i=0;i<ss.count;i++) {
+		os << ss.seeds[i] << " ";
+	}
+	return os;
 }
 
-void print_int_array(int* a,int count) {
-    for(int i=0;i<count;i++) {
-        cout << a[i] << " ";
-    }
-    cout << "\n";
+SeedStruct* handle_seeds(char * buffer) {
+	// this is destroyed during the strtok
+	// calls
+	char line[255];
+	strcpy(line,buffer);
+	char * token = strtok(line," ");
+	int token_count = 0;
+	while (token) {
+		token_count++;
+		//cout << token << "\n";
+		token = strtok(0," ");
+	}
+	//cout << "token count: " << token_count << "\n";
+	int *seeds = new int[token_count-1];
+	int index = 0;
+	strcpy(line,buffer);
+	token = strtok(line," ");
+	while (token) {
+		int res = strncmp(token,"seeds:",6);
+		if (res==0) {
+			token = strtok(0," ");
+			continue;
+		}
+		seeds[index] = atoi(token);
+		index++;
+		//cout << "token: " << token << "\n";
+		token = strtok(0," ");
+	}
+
+	for(int i=0;i<4;i++) {
+		//cout << "FINAL " << seeds[i] << "\n";
+	}
+	SeedStruct * ss = new SeedStruct;
+	ss->count = token_count-1;
+	ss->seeds = seeds;
+	return ss;
 }
 
-void handle_seeds(char * line) {
-    vector<int> svec;
-    cout << line << "\n";
-    int token_count = 0;
-    char * token = strtok(line," ");
-    while (token) {
-        if (strcmp(token,"seeds:")==0) {
-
-        } else {
-            token_count++;
-            cout << "first loop token: " << token << "\n";
-            svec.push_back(atoi(token));
-        }
-        token = strtok(0, " ");
-    }
-    cout << "total seeds: " << token_count << "\n";
-    int * seeds_array = new int[token_count];
-    token = strtok(line," ");
-    token_count = 0;
-    while (token) {
-        cout << "token at top of loop: " << token << "\n";
-        if (strcmp(token,"seeds:")==0) {
-
-        } else {
-            cout << "setting into array..." << "\n";
-            seeds_array[token_count] = atoi(token);
-            token_count++;
-            cout << "token: " << token << "\n";
-        }
-        token = strtok(0, " ");
-        cout << "token is now " << token << "\n";
-    }
-    //print_int_array(seeds_array,4);
-    for(auto i=svec.begin();i<svec.end();i++) {
-        cout << "from vec: " << *i << "\n";
-    }
-}
-
-void junk(char * line) {
-    vector<int> svec;
-    char * token = strtok(line," ");
-    while (token) {
-        cout << atoi(token) << "\n";
-        token = strtok(0,line);
-    }
+Range* handle_range(char * buffer) {
+	char line[255];
+	strcpy(line,buffer);
+	cout << "handle range line is now: " << line << "\n";
+	Range * range = new Range;
+	char * token = strtok(line," ");
+	range->dest = atoi(token);
+	token = strtok(0," ");
+	range->src = atoi(token);
+	token = strtok(0," ");
+	range->range = atoi(token);
+	return range;
 }
 
 int main() {
 
-    ifstream inf("sample.txt");
-    if (!inf) {
-        cout << "unable to open file\n";
-        return -1;
-    }
+	enum State { start, seed_to_soil, soil_to_fert, fert_to_water,
+       	water_to_light, light_to_temp, temp_to_humid, humid_to_loc};
 
-    int *seeds_array = 0;
+	State state = start;
+	SeedStruct * seeds;
 
-    char line[512]; // up to 512 chars
-    while (inf) {
-        inf.getline(line,512);
-        if (strncmp(line,"seeds:",5)==0) {
-            //handle_seeds(line);
-            junk(line);
-        }
-    }
+	// read file
+	char buffer[255];
+	ifstream inf;
+	inf.open("sample.txt");
+	while (!inf.eof()) {
+		inf.getline(buffer,255);
+		if (strlen(buffer)==0) {
+			continue;
+		}
+		cout << "line read from file: " << strlen(buffer) << " --> " << buffer << "\n";
+		if (strncmp("seeds:",buffer,5)==0) {
+			cout << "seeds matched" << "\n";
+			seeds = handle_seeds(buffer);
+			continue;
+		}
+		if (strncmp("seed-to-soil map:",buffer,17)==0) {
+			cout << "change state to seed to soil" << "\n";
+			state = seed_to_soil;
+			continue;
+		}
+		if (strncmp("soil-to-fertilizer map:",buffer,23)==0) {
+			cout << "change state to soil to fert" << "\n";
+			state = soil_to_fert;
+			continue;
+		}
+		if (strncmp("fertilizer-to-water map:",buffer,24)==0) {
+			cout << "change state to fert to water" << "\n";
+			state = fert_to_water;
+			continue;
+		}
+		if (strncmp("water-to-light map:",buffer,19)==0) {
+			cout << "change state to water to light" << "\n";
+			state = water_to_light;
+			continue;
+		}
+		if (strncmp("light-to-temperature map:",buffer,25)==0) {
+			cout << "change state light to temp" << "\n";
+			state = light_to_temp;
+			continue;
+		}
+		if (strncmp("temperature-to-humidity map:",buffer,28)==0) {
+			cout << "change state temp to humid" << "\n";
+			state = temp_to_humid;
+			continue;
+		}
+		if (strncmp("humidity-to-location map:",buffer,25)==0) {
+			cout << "change state humid to loc" << "\n";
+			state = humid_to_loc;
+			continue;
+		}
 
+		Range* range = handle_range(buffer);
+		cout << "parsed range: " << *range << "\n";
+	}
+	inf.close();
 
-    delete[] seeds_array;
-    return 0;
+	cout << "seeds: " << *seeds << "\n";
+	return 0;
 }
