@@ -75,22 +75,27 @@ class RData:
     def __repr__(self):
         return str(self.dead) + " " + self.score + " " + self.line
 
+all_items = set()
 rd = []
 for line in data:
-    rd.append(RData(line))
+    tmp = RData(line)
+    rd.append(tmp)
+    all_items.add(tmp)
 
 card_power = ['A','K','Q','J','T','9','8','7','6','5','4','3','2']
 
+rank = 1
 # five of kind first
 # four of kind next
 # full house
 # three of kind
-tmp = []
+tmp = set()
 for i in range(len(rd)):
     r = rd[i]
     if r.dead: continue
     if r.score==THREE_OF_KIND:
-        tmp.append(r)
+        tmp.add(r)
         r.dead = True
         r.rank = 10
 print(rd)
+print(tmp)
