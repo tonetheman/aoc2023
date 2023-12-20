@@ -51,35 +51,41 @@ def part1():
             pass
 
 def junk():
+    class MatchRule:
+        def __init__(self,match,target):
+            self.match = match
+            self.target = target
+
     class Rule:
         def __init__(self,name):
             self.name = name
             self.rules = []
+        def add(self,ropts):
+            self.rules.append(ropts)
 
     r1 = Rule("in")
-    r1.rules.append({"match" : "s<1351",
-                    "target" : "px"})
-    r1.rules.append({"match" : "DEFAULT",
-                     "target":"qqz"})
+    r1.add(MatchRule("s<1351","px"))
+    r1.add(MatchRule("DEFAULT","qqz"))
 
 
     def test_rule(r,x,m,a,s):
         # do not dig this from all the dumb dict
         # syntax
         current_rule = 0
-        res = eval(r.rules[current_rule]["match"],None,
-                {"a":a,
-                 "x":x,
-                 "m":m,
-                 "s":s})
-        if res==False:
-            # move to next rule in this case
-            current_rule = current_rule + 1
-            if r.rules[current_rule]["match"] == "DEFAULT":
-                return r.rules[current_rule]["target"]
-        else:
-            # found a match bug out quick
-            return r.rules[current_rule]["target"]
+        while True:
+            res = eval(r.rules[current_rule].match,None,
+                    {"a":a,
+                     "x":x,
+                     "m":m,
+                     "s":s})
+            if res==False:
+                # move to next rule in this case
+                current_rule = current_rule + 1
+                if r.rules[current_rule].match == "DEFAULT":
+                    return r.rules[current_rule].target
+            else:
+                # found a match bug out quick
+                return r.rules[current_rule].target
 
         
         
