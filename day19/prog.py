@@ -67,12 +67,21 @@ def junk():
     r1.add(MatchRule("s<1351","px"))
     r1.add(MatchRule("DEFAULT","qqz"))
 
+    r2 = Rule("qqz")
+    r2.add(MatchRule("s>2770","qs"))
+    r2.add(MatchRule("m<1801","hdj"))
+    r2.add(MatchRule("TERM","R"))
 
+    r3 = Rule("qs")
+    r2.add(MatchRule("s>3448","A"))
+    r2.add(MatchRule("DEFAULT","lnx"))
+                     
     def test_rule(r,x,m,a,s):
         # do not dig this from all the dumb dict
         # syntax
         current_rule = 0
         while True:
+            print(r)
             res = eval(r.rules[current_rule].match,None,
                     {"a":a,
                      "x":x,
@@ -91,7 +100,12 @@ def junk():
         
 
     print( test_rule(r1,787,2655,1222,2876) )
+    print( test_rule(r2,787,2655,1222,2876) )
+    print( test_rule(r3,787,2655,1222,2876) )
+
+
 
 junk()
-    
+
+
 
